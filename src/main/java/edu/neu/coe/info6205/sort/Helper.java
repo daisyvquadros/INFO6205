@@ -191,6 +191,7 @@ public interface Helper<X extends Comparable<X>> extends GenericHelper<X> {
      */
     default X[] preProcess(X[] xs) {
         // CONSIDER invoking init from here.
+        init(xs.length);
         return xs;
     }
 
