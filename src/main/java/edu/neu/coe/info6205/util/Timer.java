@@ -64,13 +64,15 @@ public class Timer {
             if (!(preFunction == null)) {
                 preFunctionValue = preFunction.apply(supplier.get());
             }
-
-            if (!(function == null) && !(preFunctionValue == null)) {
+            if (!(function == null)) {
                 resume();
-                functionValue = function.apply(preFunctionValue);
+                if ((preFunctionValue == null)) {
+                    functionValue = function.apply(supplier.get());
+                } else {
+                    functionValue = function.apply(preFunctionValue);
+                }
                 pauseAndLap();
             }
-
             if (!(postFunction == null) && !(functionValue == null)) {
                 postFunction.accept(functionValue);
             }
@@ -207,8 +209,7 @@ public class Timer {
      * @return the corresponding number of milliseconds.
      */
     private static double toMillisecs(long ticks) {
-        return TimeUnit.MILLISECONDS.convert(ticks,
-                TimeUnit.NANOSECONDS);
+        return Math.max(0L, Math.round(ticks / 1_000_000.0d));
     }
 
     final static LazyLogger logger = new LazyLogger(Timer.class);
