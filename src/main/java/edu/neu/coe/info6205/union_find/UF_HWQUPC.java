@@ -44,6 +44,15 @@ public class UF_HWQUPC implements UF {
     }
 
     /**
+     * Returns the number of sets.
+     *
+     * @return the number of sets (between {@code 1} and {@code n})
+     */
+    public int count() {
+        return count;
+    }
+
+    /**
      * Initializes an empty union–find data structure with {@code n} sites
      * {@code 0} through {@code n-1}. Each site is initially in its own
      * component.
@@ -80,9 +89,7 @@ public class UF_HWQUPC implements UF {
      */
     public int find(int p) {
         validate(p);
-        int root = p;
-        // TO BE IMPLEMENTED
-        return root;
+        return doPathCompression(p);
     }
 
     /**
@@ -168,13 +175,53 @@ public class UF_HWQUPC implements UF {
     private boolean pathCompression;
 
     private void mergeComponents(int i, int j) {
-        // TO BE IMPLEMENTED make shorter root point to taller one
+        if (i == j) return;
+
+        // make smaller root point to larger one
+        if (height[i] < height[j]) {
+            updateParent(i, j);
+            updateHeight(j, i);
+        } else {
+            updateParent(j, i);
+            updateHeight(i, j);
+        }
+        count--;
     }
 
     /**
      * This implements the single-pass path-halving mechanism of path compression
      */
-    private void doPathCompression(int i) {
+    private int doPathCompression(int p) {
         // TO BE IMPLEMENTED update parent to value of grandparent
+        int root = p;
+        while (root != parent[root])
+            root = parent[root];
+        while (p != root) {
+            int newp = parent[p];
+            parent[p] = root;
+            p = newp;
+        }
+        return root;
+    }
+
+    public static void main(String[] args) {
+        if (args.length == 0)
+            throw new RuntimeException("Syntax: UF_HWQUPC invalid]");
+        int i = 0;
+        int N = Integer.parseInt(args[0]);
+        UF_HWQUPC uf = new UF_HWQUPC(N);
+        ++i;
+
+        while (i <= N) {
+            int p = Integer.parseInt(args[i]);
+            ++i;
+            if (i <= N) {
+                int q = Integer.parseInt(args[i]);
+                if (uf.find(p) == uf.find(q)) continue;
+                uf.union(p, q);
+                System.out.println(p + "  " + q);
+            }
+        }
+        System.out.println(uf.count() + " components");
     }
 }
