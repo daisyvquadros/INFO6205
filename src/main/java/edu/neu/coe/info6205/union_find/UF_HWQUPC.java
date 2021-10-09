@@ -220,7 +220,7 @@ public class UF_HWQUPC implements UF {
 
     public static void main(String[] args) {
         int n = 100000;
-        int trials = 10;
+        int trials = 10000;
         int[] outcome = new int[trials];
 
         //repeat trials n times
@@ -232,11 +232,11 @@ public class UF_HWQUPC implements UF {
         System.out.println("mean       = " + average(outcome));
     }
 
-    private static double average(int[] edges) {
+    private static double average(int[] inputArr) {
         double total = 0;
-        for (int i = 0; i < edges.length; i++) {
-            total = total + edges[i];
+        for (int element : inputArr) {
+            total = total + element;
         }
-        return total / edges.length;
+        return total / inputArr.length;
     }
 }
