@@ -7,6 +7,8 @@
  */
 package edu.neu.coe.info6205.union_find;
 
+import edu.neu.coe.info6205.graphs.BFS_and_prims.StdRandom;
+
 import java.util.Arrays;
 
 /**
@@ -204,24 +206,37 @@ public class UF_HWQUPC implements UF {
         return root;
     }
 
-    public static void main(String[] args) {
-        if (args.length == 0)
-            throw new RuntimeException("Syntax: UF_HWQUPC invalid]");
-        int i = 0;
-        int N = Integer.parseInt(args[0]);
-        UF_HWQUPC uf = new UF_HWQUPC(N);
-        ++i;
-
-        while (i <= N) {
-            int p = Integer.parseInt(args[i]);
-            ++i;
-            if (i <= N) {
-                int q = Integer.parseInt(args[i]);
-                if (uf.find(p) == uf.find(q)) continue;
-                uf.union(p, q);
-                System.out.println(p + "  " + q);
-            }
+    public static int count(int n) {
+        int count = 0;
+        UF_HWQUPC uf = new UF_HWQUPC(n);
+        while (uf.count() > 1) {
+            int i = StdRandom.uniform(n);
+            int j = StdRandom.uniform(n);
+            uf.union(i, j);
+            count++;
         }
-        System.out.println(uf.count() + " components");
+        return count;
+    }
+
+    public static void main(String[] args) {
+        int n = Integer.parseInt(args[0]);
+        int trials = Integer.parseInt(args[1]);
+        int[] outcome = new int[trials];
+
+        //repeat trials n times
+        for (int t = 0; t < trials; t++) {
+            outcome[t] = count(n);
+        }
+        // printing the analysis
+        System.out.println("1/2 n ln n = " + 0.5 * n * Math.log(n));
+        System.out.println("mean       = " + average(outcome));
+    }
+
+    private static double average(int[] edges) {
+        double total = 0;
+        for (int i = 0; i < edges.length; i++) {
+            total = total + edges[i];
+        }
+        return total / edges.length;
     }
 }
