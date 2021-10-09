@@ -219,8 +219,8 @@ public class UF_HWQUPC implements UF {
     }
 
     public static void main(String[] args) {
-        int n = Integer.parseInt(args[0]);
-        int trials = Integer.parseInt(args[1]);
+        int n = 100000;
+        int trials = 10;
         int[] outcome = new int[trials];
 
         //repeat trials n times
