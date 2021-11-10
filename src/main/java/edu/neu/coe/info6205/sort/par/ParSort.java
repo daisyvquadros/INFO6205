@@ -13,10 +13,10 @@ class ParSort {
     public static int cutoff = 1000;
 
     public static void sort(int[] array, int from, int to) {
-        if (to - from < cutoff) Arrays.sort(array, from, to); // sequential implementation
-
-        else { // parallel implementation
-
+        // sequential implementationL
+        if (to - from < cutoff) Arrays.sort(array, from, to);
+        // parallel implementation
+        else {
             CompletableFuture<int[]> parsort1 = parsort(array, from, from + (to - from) / 2);
             CompletableFuture<int[]> parsort2 = parsort(array, from + (to - from) / 2, to);
             CompletableFuture<int[]> parsort = parsort1.thenCombine(parsort2, (xs1, xs2) -> {
@@ -36,9 +36,8 @@ class ParSort {
                 }
                 return result;
             });
-
             parsort.whenComplete((result, throwable) -> System.arraycopy(result, 0, array, from, result.length));
-      //      System.out.println("# threads: "+ ForkJoinPool.commonPool().getRunningThreadCount());
+            //System.out.println("# threads: " + ForkJoinPool.commonPool().getRunningThreadCount());
             parsort.join();
         }
     }

@@ -17,16 +17,36 @@ import java.util.concurrent.ForkJoinPool;
 public class Main {
 
     public static void main(String[] args) {
-        processArgs(args);
-
-
         for (int k = 2; k <= ForkJoinPool.getCommonPoolParallelism(); k = k + 2) {
-
             System.setProperty("java.util.concurrent.ForkJoinPool.common.parallelism", String.valueOf(k));
-            System.out.println("Degree of parallelism: " + ForkJoinPool.getCommonPoolParallelism());
-            Random random = new Random();
-            int[] array = new int[2000000];
-            ArrayList<Long> timeList = new ArrayList<>();
+            ArrayList<String> timeList = new ArrayList<>();
+            performParSort(timeList, k);
+            printResults(timeList);
+        }
+    }
+
+    private static void printResults(ArrayList<String> timeList) {
+        try {
+            FileOutputStream fis = new FileOutputStream("./src/result.csv");
+            OutputStreamWriter isr = new OutputStreamWriter(fis);
+            BufferedWriter bw = new BufferedWriter(isr);
+            int j = 0;
+            for (String i : timeList) {
+                j++;
+                bw.write(i);
+                bw.flush();
+            }
+            bw.close();
+
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    private static void performParSort(ArrayList<String> timeList, int threadCount) {
+        Random random = new Random();
+        for (int k = 1; k <= 5; k++) {
+            int[] array = new int[1000000 * k];
             for (int j = 50; j < 100; j++) {
                 ParSort.cutoff = 10000 * (j + 1);
                 long time;
@@ -37,56 +57,12 @@ public class Main {
                 }
                 long endTime = System.currentTimeMillis();
                 time = (endTime - startTime);
-                timeList.add(time);
-                System.out.println("cutoff：" + (ParSort.cutoff) + "\t\t10times Time:" + time + "ms");
 
-            }
-            try {
-                FileOutputStream fis = new FileOutputStream("./src/result.csv");
-                OutputStreamWriter isr = new OutputStreamWriter(fis);
-                BufferedWriter bw = new BufferedWriter(isr);
-                int j = 0;
-                for (long i : timeList) {
-                    String content = (double) 10000 * (j + 1) / 2000000 + "," + (double) i / 10 + "\n";
-                    j++;
-                    bw.write(content);
-                    bw.flush();
-                }
-                bw.close();
-
-            } catch (IOException e) {
-                e.printStackTrace();
+                String output = threadCount + "," + array.length + "," + ParSort.cutoff + "," + time + "," + "\n" ;
+                timeList.add(output);
+                System.out.println("cutoff：" + (ParSort.cutoff) + "\t\t10times Time: " + time + "ms " + "Array size: " + array.length);
             }
         }
     }
-
-    private static void processArgs(String[] args) {
-        String[] xs = args; // what needs to be provided in the args
-        while (xs.length > 0)
-            if (xs[0].startsWith("-")) xs = processArg(xs);
-    }
-
-    private static String[] processArg(String[] xs) {
-        String[] result = new String[0];
-        System.arraycopy(xs, 2, result, 0, xs.length - 2);
-        processCommand(xs[0], xs[1]);
-        return result;
-    }
-
-    private static void processCommand(String x, String y) {
-        if (x.equalsIgnoreCase("N")) setConfig(x, Integer.parseInt(y));
-        else
-            // TODO sort this out
-            if (x.equalsIgnoreCase("P"))
-                ForkJoinPool.getCommonPoolParallelism();
-    }
-
-    private static void setConfig(String x, int i) {
-        configuration.put(x, i);
-    }
-
-    @SuppressWarnings("MismatchedQueryAndUpdateOfCollection")
-    private static final Map<String, Integer> configuration = new HashMap<>();
-
 
 }
