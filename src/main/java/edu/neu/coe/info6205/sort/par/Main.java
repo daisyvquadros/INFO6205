@@ -21,13 +21,13 @@ public class Main {
             System.setProperty("java.util.concurrent.ForkJoinPool.common.parallelism", String.valueOf(k));
             ArrayList<String> timeList = new ArrayList<>();
             performParSort(timeList, k);
-            printResults(timeList);
+            printResults(timeList, k);
         }
     }
 
-    private static void printResults(ArrayList<String> timeList) {
+    private static void printResults(ArrayList<String> timeList, int k) {
         try {
-            FileOutputStream fis = new FileOutputStream("./src/result.csv");
+            FileOutputStream fis = new FileOutputStream("./src/result_ "+ k + ".csv");
             OutputStreamWriter isr = new OutputStreamWriter(fis);
             BufferedWriter bw = new BufferedWriter(isr);
             int j = 0;
